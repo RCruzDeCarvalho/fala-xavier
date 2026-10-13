@@ -1,0 +1,375 @@
+<title>Fala, Xavier</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&family=Baloo+2:wght@600;800&display=swap">
+<style>
+/* Layout: ecrã único de tablet. Tira de frase fixa em cima, palavras essenciais, separadores por categoria, grelha de cartões grandes. Cores das categorias inspiradas na chave de Fitzgerald usada em CAA. */
+:root{
+  --bg:#E9EEF2; --surface:#FFFFFF; --ink:#18222D; --muted:#5B6B7A; --line:#C9D3DC; --accent:#1F6FB2;
+  --people:#FFE79A; --action:#BFE8B5; --thing:#FFD2A6; --feel:#BFD9F5; --social:#F6C6DA; --no:#F4B3AE;
+  --display:"Baloo 2","Atkinson Hyperlegible",system-ui,sans-serif;
+  --body:"Atkinson Hyperlegible",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+  --r:18px;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#10161C; --surface:#1A232C; --ink:#EAF0F5; --muted:#9AAAB8; --line:#2F3C48; --accent:#6DB3EE;
+  --people:#5E5020; --action:#2E5428; --thing:#61401F; --feel:#26445F; --social:#5C2E42; --no:#622A27; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#10161C; --surface:#1A232C; --ink:#EAF0F5; --muted:#9AAAB8; --line:#2F3C48; --accent:#6DB3EE;
+  --people:#5E5020; --action:#2E5428; --thing:#61401F; --feel:#26445F; --social:#5C2E42; --no:#622A27; color-scheme:dark}
+html,body{height:100%}
+body{background:var(--bg);color:var(--ink);font-family:var(--body);font-size:16px;-webkit-tap-highlight-color:transparent;user-select:none;-webkit-user-select:none}
+.app{height:100%;display:flex;flex-direction:column;gap:12px;padding-inline:16px;padding-block:12px;box-sizing:border-box;max-width:1200px;margin:0 auto}
+button{font:inherit;color:inherit;cursor:pointer}
+button:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+
+/* Tira de frase */
+.strip{display:flex;gap:10px;align-items:stretch;background:var(--surface);border:2px solid var(--line);border-radius:var(--r);padding:10px;min-height:96px}
+.tokens{flex:1;min-width:0;display:flex;gap:8px;overflow-x:auto;align-items:center}
+.tokens:empty::before{content:"Toca num cartão";color:var(--muted);font-size:1.1rem;padding-left:8px}
+.token{flex:none;display:flex;flex-direction:column;align-items:center;justify-content:center;width:76px;height:76px;border-radius:12px;border:none;background:var(--c,var(--bg));padding:4px;font-size:.78rem;font-weight:700;line-height:1.1;text-align:center}
+.token .pic{font-size:2rem;line-height:1}
+.token img{width:44px;height:44px;object-fit:cover;border-radius:8px}
+.stripBtns{display:flex;gap:8px}
+.big{border:none;border-radius:14px;padding:0 18px;font-family:var(--display);font-weight:800;font-size:1.25rem;min-width:84px}
+.speak{background:var(--accent);color:var(--surface)}
+.clear{background:var(--bg);border:2px solid var(--line)}
+
+/* Essenciais */
+.core{display:grid;grid-template-columns:repeat(6,1fr);gap:8px}
+.core .card{min-height:72px;flex-direction:row;gap:8px;padding:8px}
+.core .card .pic{font-size:1.8rem}
+.core .card span{font-size:1.05rem}
+
+/* Separadores */
+.tabs{display:flex;gap:8px;overflow-x:auto;padding-bottom:2px}
+.tab{flex:none;border:2px solid var(--line);background:var(--surface);border-radius:999px;padding:10px 18px;font-family:var(--display);font-weight:600;font-size:1.1rem;display:flex;align-items:center;gap:8px}
+.tab i{width:14px;height:14px;border-radius:50%;background:var(--c)}
+.tab[aria-selected="true"]{border-color:var(--ink);background:var(--c)}
+
+/* Grelha */
+.grid{flex:1;min-height:0;overflow-y:auto;display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:12px;align-content:start;padding-bottom:8px}
+.card{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;border:none;border-radius:var(--r);background:var(--surface);box-shadow:inset 0 0 0 3px var(--c);padding:12px 8px;min-height:150px;transition:transform .08s}
+.card:active{transform:scale(.96)}
+.card .pic{font-size:3.6rem;line-height:1}
+.card img{width:100%;max-width:120px;aspect-ratio:1;object-fit:cover;border-radius:12px}
+.card span{font-family:var(--display);font-weight:800;font-size:1.3rem;line-height:1.1;text-align:center}
+.card.flash{background:var(--c)}
+
+.foot{display:flex;justify-content:space-between;align-items:center;color:var(--muted);font-size:.85rem;gap:12px}
+.lock{border:2px dashed var(--line);background:transparent;border-radius:12px;padding:8px 14px;color:var(--muted);position:relative;overflow:hidden;touch-action:none}
+.lock b{position:absolute;inset:0;background:var(--line);transform:scaleX(0);transform-origin:left;opacity:.6}
+
+/* Painel dos pais */
+.panel{position:fixed;inset:0;background:var(--bg);overflow-y:auto;padding-inline:16px;padding-block:calc(16px + env(safe-area-inset-top,0px)) calc(24px + env(safe-area-inset-bottom,0px));user-select:text;-webkit-user-select:text}
+.panel .in{max-width:760px;margin:0 auto;display:flex;flex-direction:column;gap:18px}
+.panel h1{font-family:var(--display);font-size:1.9rem;margin:0;text-wrap:balance}
+.panel h2{font-family:var(--display);font-size:1.3rem;margin:0}
+.box{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:16px;display:flex;flex-direction:column;gap:12px}
+.box p{margin:0;color:var(--muted);line-height:1.5;max-width:65ch}
+label{font-weight:700;display:flex;flex-direction:column;gap:6px}
+input[type=text],select{font:inherit;padding:12px;border-radius:10px;border:2px solid var(--line);background:var(--bg);color:var(--ink)}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.btn{border:2px solid var(--line);background:var(--bg);border-radius:12px;padding:10px 16px;font-weight:700}
+.btn.primary{background:var(--accent);border-color:var(--accent);color:var(--surface)}
+.btn.danger{border-color:var(--no);background:var(--no)}
+.preview{width:96px;height:96px;border-radius:12px;background:var(--bg);border:2px dashed var(--line);display:grid;place-items:center;font-size:2.5rem;overflow:hidden}
+.preview img{width:100%;height:100%;object-fit:cover}
+.list{display:flex;flex-direction:column;gap:8px}
+.item{display:flex;align-items:center;gap:12px;padding:8px;border-radius:12px;background:var(--bg)}
+.item .thumb{width:48px;height:48px;border-radius:10px;display:grid;place-items:center;font-size:1.7rem;background:var(--c);overflow:hidden;flex:none}
+.item .thumb img{width:100%;height:100%;object-fit:cover}
+.item .nm{flex:1;min-width:0;font-weight:700}
+.item .nm small{display:block;font-weight:400;color:var(--muted)}
+.toast{position:fixed;left:50%;bottom:calc(20px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:10px 18px;border-radius:999px;font-weight:700}
+
+@media (max-width:700px){
+  .core{grid-template-columns:repeat(3,1fr)}
+  .grid{grid-template-columns:repeat(auto-fill,minmax(120px,1fr))}
+  .card{min-height:124px}.card .pic{font-size:2.8rem}.card span{font-size:1.1rem}
+  .strip{flex-direction:column}.stripBtns .big{flex:1;min-height:52px}
+}
+@media (prefers-reduced-motion:reduce){.card{transition:none}}
+</style>
+
+<div class="app">
+  <div class="strip">
+    <div class="tokens" id="tokens" aria-live="polite"></div>
+    <div class="stripBtns">
+      <button class="big speak" id="speakAll">Falar</button>
+      <button class="big clear" id="clearAll" aria-label="Apagar frase">Apagar</button>
+    </div>
+  </div>
+  <div class="core" id="core"></div>
+  <div class="tabs" id="tabs" role="tablist"></div>
+  <div class="grid" id="grid"></div>
+  <div class="foot">
+    <span id="voiceInfo">A preparar a voz…</span>
+    <button class="lock" id="lock" aria-label="Manter premido para abrir o modo pais"><b id="lockFill"></b><span style="position:relative">Pais · manter premido</span></button>
+  </div>
+</div>
+
+<div class="panel" id="panel" hidden>
+  <div class="in">
+    <div class="row" style="justify-content:space-between">
+      <h1>Modo pais</h1>
+      <button class="btn primary" id="closePanel">Voltar ao Xavier</button>
+    </div>
+
+    <div class="box">
+      <h2>Novo cartão</h2>
+      <p>Tira uma fotografia do objecto real (o copo dele, o prato, o comando). Fotos verdadeiras costumam ser mais fáceis de reconhecer do que desenhos.</p>
+      <div class="row" style="align-items:flex-start">
+        <div class="preview" id="preview">📷</div>
+        <div style="flex:1;min-width:200px;display:flex;flex-direction:column;gap:10px">
+          <label class="btn" style="flex-direction:row;justify-content:center">Tirar ou escolher foto
+            <input type="file" id="photo" accept="image/*" capture="environment" hidden>
+          </label>
+        </div>
+      </div>
+      <label for="nm">Nome no cartão<input type="text" id="nm" placeholder="Ex.: copo azul" maxlength="30"></label>
+      <label for="say">O que a voz diz (opcional)<input type="text" id="say" placeholder="Ex.: quero beber" maxlength="60"></label>
+      <label for="cat">Categoria<select id="cat"></select></label>
+      <div class="row"><button class="btn primary" id="addCard">Guardar cartão</button><span id="addMsg" style="color:var(--muted)"></span></div>
+    </div>
+
+    <div class="box">
+      <h2>Voz</h2>
+      <p>Se a voz soar a português do Brasil, instala a voz portuguesa no tablet em Definições, Gestão geral, Texto para voz, Google, Português (Portugal).</p>
+      <label for="voiceSel">Voz<select id="voiceSel"></select></label>
+      <label for="rate">Velocidade<input type="range" id="rate" min="0.6" max="1.2" step="0.05"></label>
+      <label style="flex-direction:row;align-items:center;gap:10px;font-weight:400"><input type="checkbox" id="tapSpeak" style="width:22px;height:22px">Falar logo que ele toca num cartão</label>
+      <div class="row"><button class="btn" id="testVoice">Experimentar voz</button></div>
+    </div>
+
+    <div class="box">
+      <h2>Cartões desta categoria</h2>
+      <label for="manageCat">Categoria<select id="manageCat"></select></label>
+      <div class="list" id="manageList"></div>
+      <div class="row"><button class="btn" id="resetAll">Repor cartões de origem</button></div>
+    </div>
+  </div>
+</div>
+<div class="toast" id="toast" hidden></div>
+
+<script>
+const CATS = [
+  {id:"comer", name:"Comer e beber", c:"--thing"},
+  {id:"fazer", name:"Fazer", c:"--action"},
+  {id:"pessoas", name:"Pessoas", c:"--people"},
+  {id:"sentir", name:"Sentir", c:"--feel"}
+];
+const CORE = [
+  {id:"k1",label:"Eu quero",say:"Eu quero",emoji:"🙋",c:"--social"},
+  {id:"k2",label:"Mais",say:"Mais",emoji:"➕",c:"--social"},
+  {id:"k3",label:"Acabou",say:"Acabou",emoji:"✋",c:"--social"},
+  {id:"k4",label:"Ajuda",say:"Ajuda",emoji:"🤝",c:"--social"},
+  {id:"k5",label:"Sim",say:"Sim",emoji:"👍",c:"--action"},
+  {id:"k6",label:"Não",say:"Não",emoji:"👎",c:"--no"}
+];
+const DEFAULTS = [
+  ["comer","Tosta mista","🥪"],["comer","Torrada","🍞"],["comer","Nuggets","🍗"],["comer","Panado","🐟"],
+  ["comer","Batatas fritas","🍟"],["comer","Água","💧"],["comer","Ice tea","🧃"],["comer","Coca-Cola","🥤"],
+  ["fazer","Ver televisão","📺"],["fazer","Brincar","🧸"],["fazer","Ir à rua","🌳"],["fazer","Andar de carro","🚗"],
+  ["fazer","Colo","🤗"],["fazer","Banho","🛁"],["fazer","Mudar a fralda","🚼"],["fazer","Dormir","🛏️"],["fazer","Música","🎵"],
+  ["pessoas","Mãe","👩"],["pessoas","Pai","👨"],["pessoas","Manos","🧒"],["pessoas","Avó","👵"],["pessoas","Professora","🧑‍🏫"],
+  ["sentir","Dói","🤕"],["sentir","Contente","😀"],["sentir","Zangado","😠"],["sentir","Cansado","😴"],["sentir","Frio","🥶"],["sentir","Calor","🥵"]
+].map(([cat,label,emoji],i)=>({id:"d"+i,cat,label,say:label,emoji}));
+
+let cards = DEFAULTS.slice();
+let strip = [];
+let current = "comer";
+let settings = {rate:0.9, tapSpeak:true, voice:""};
+const $ = id => document.getElementById(id);
+const catColor = cat => (CATS.find(c=>c.id===cat)||CATS[0]).c;
+
+/* ---------- armazenamento (IndexedDB, com recurso a memória) ---------- */
+let db = null;
+function openDB(){
+  return new Promise(res=>{
+    try{
+      const r = indexedDB.open("fala-xavier",1);
+      r.onupgradeneeded = ()=> r.result.createObjectStore("kv");
+      r.onsuccess = ()=>{db=r.result;res()};
+      r.onerror = ()=>res();
+    }catch(e){res()}
+  });
+}
+function idbGet(k){return new Promise(res=>{try{if(!db)return res(null);const q=db.transaction("kv").objectStore("kv").get(k);q.onsuccess=()=>res(q.result??null);q.onerror=()=>res(null)}catch(e){res(null)}})}
+function idbSet(k,v){return new Promise(res=>{try{if(!db)return res(false);const t=db.transaction("kv","readwrite");t.objectStore("kv").put(v,k);t.oncomplete=()=>res(true);t.onerror=()=>res(false)}catch(e){res(false)}})}
+async function save(){ const ok = await idbSet("cards",cards); if(!ok) toast("Não foi possível guardar neste navegador"); }
+function saveSettings(){ try{localStorage.setItem("fx-settings",JSON.stringify(settings))}catch(e){} }
+function loadSettings(){ try{Object.assign(settings,JSON.parse(localStorage.getItem("fx-settings")||"{}"))}catch(e){} }
+
+/* ---------- voz ---------- */
+let voices = [];
+function pickVoice(){
+  if(!("speechSynthesis" in window)) return null;
+  voices = speechSynthesis.getVoices().filter(v=>v.lang && v.lang.toLowerCase().startsWith("pt"));
+  let v = voices.find(v=>v.voiceURI===settings.voice)
+       || voices.find(v=>v.lang.toLowerCase().replace("_","-")==="pt-pt")
+       || voices.find(v=>!/br/i.test(v.lang)) || voices[0] || null;
+  const sel = $("voiceSel"); sel.innerHTML = "";
+  voices.forEach(x=>{const o=document.createElement("option");o.value=x.voiceURI;o.textContent=`${x.name} (${x.lang})`;if(v&&x.voiceURI===v.voiceURI)o.selected=true;sel.appendChild(o)});
+  if(!voices.length){const o=document.createElement("option");o.textContent="Sem vozes portuguesas neste aparelho";sel.appendChild(o)}
+  $("voiceInfo").textContent = v ? (/br/i.test(v.lang) ? "Voz: português do Brasil" : "Voz: português") : "Voz portuguesa não encontrada";
+  return v;
+}
+let voice = null;
+function speak(text){
+  if(window.AndroidTTS){try{AndroidTTS.speak(String(text),Number(settings.rate))}catch(e){}return}
+  if(!("speechSynthesis" in window)){toast("Este navegador não tem voz");return}
+  try{
+    speechSynthesis.cancel();
+    const u = new SpeechSynthesisUtterance(text);
+    u.lang = voice ? voice.lang : "pt-PT";
+    if(voice) u.voice = voice;
+    u.rate = settings.rate;
+    speechSynthesis.speak(u);
+  }catch(e){}
+}
+
+/* ---------- desenho ---------- */
+function picHTML(c, cls="pic"){
+  return c.img ? `<img src="${c.img}" alt="">` : `<span class="${cls}" aria-hidden="true">${c.emoji||"⬜"}</span>`;
+}
+function esc(s){return String(s).replace(/[&<>"]/g,ch=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[ch]))}
+function cardBtn(c, color){
+  const b = document.createElement("button");
+  b.className = "card"; b.style.setProperty("--c",`var(${color})`);
+  b.innerHTML = `${picHTML(c)}<span>${esc(c.label)}</span>`;
+  b.addEventListener("click",()=>{
+    addToStrip({...c,color});
+    if(settings.tapSpeak) speak(c.say||c.label);
+    b.classList.add("flash"); setTimeout(()=>b.classList.remove("flash"),180);
+  });
+  return b;
+}
+function renderCore(){ const el=$("core"); el.innerHTML=""; CORE.forEach(c=>el.appendChild(cardBtn(c,c.c))); }
+function renderTabs(){
+  const el=$("tabs"); el.innerHTML="";
+  CATS.forEach(c=>{
+    const t=document.createElement("button");
+    t.className="tab"; t.setAttribute("role","tab"); t.setAttribute("aria-selected",c.id===current);
+    t.style.setProperty("--c",`var(${c.c})`);
+    t.innerHTML=`<i></i>${c.name}`;
+    t.onclick=()=>{current=c.id;renderTabs();renderGrid()};
+    el.appendChild(t);
+  });
+}
+function renderGrid(){
+  const el=$("grid"); el.innerHTML="";
+  cards.filter(c=>c.cat===current).forEach(c=>el.appendChild(cardBtn(c,catColor(c.cat))));
+}
+function addToStrip(c){ if(strip.length>=6) strip.shift(); strip.push(c); renderStrip(); }
+function renderStrip(){
+  const el=$("tokens"); el.innerHTML="";
+  strip.forEach((c,i)=>{
+    const t=document.createElement("button");
+    t.className="token"; t.style.setProperty("--c",`var(${c.color})`);
+    t.setAttribute("aria-label",`Tirar ${c.label}`);
+    t.innerHTML=`${picHTML(c)}<span>${esc(c.label)}</span>`;
+    t.onclick=()=>{strip.splice(i,1);renderStrip()};
+    el.appendChild(t);
+  });
+  el.scrollLeft = el.scrollWidth;
+}
+$("speakAll").onclick=()=>{ if(strip.length) speak(strip.map(c=>c.say||c.label).join(" ")); };
+$("clearAll").onclick=()=>{ strip=[]; renderStrip(); };
+
+/* ---------- modo pais (manter premido 2 s) ---------- */
+let holdT=null, holdStart=0, raf=null;
+function holdTick(){ const p=Math.min(1,(Date.now()-holdStart)/2000); $("lockFill").style.transform=`scaleX(${p})`; if(p>=1){endHold();openPanel()} else raf=requestAnimationFrame(holdTick) }
+function startHold(e){ e.preventDefault(); holdStart=Date.now(); raf=requestAnimationFrame(holdTick) }
+function endHold(){ cancelAnimationFrame(raf); $("lockFill").style.transform="scaleX(0)" }
+$("lock").addEventListener("pointerdown",startHold);
+["pointerup","pointerleave","pointercancel"].forEach(ev=>$("lock").addEventListener(ev,endHold));
+$("lock").addEventListener("keydown",e=>{if(e.key==="Enter")openPanel()});
+
+function openPanel(){ $("panel").hidden=false; $("manageCat").value=current; renderManage(); }
+$("closePanel").onclick=()=>{ $("panel").hidden=true; renderGrid(); };
+
+function fillCatSelects(){
+  ["cat","manageCat"].forEach(id=>{const s=$(id);s.innerHTML="";CATS.forEach(c=>{const o=document.createElement("option");o.value=c.id;o.textContent=c.name;s.appendChild(o)})});
+}
+let pendingImg = null;
+$("photo").addEventListener("change",e=>{
+  const f=e.target.files&&e.target.files[0]; if(!f) return;
+  const fr=new FileReader();
+  fr.onload=()=>{
+    const im=new Image();
+    im.onload=()=>{
+      const s=480, cv=document.createElement("canvas"); cv.width=s; cv.height=s;
+      const m=Math.min(im.width,im.height), sx=(im.width-m)/2, sy=(im.height-m)/2;
+      cv.getContext("2d").drawImage(im,sx,sy,m,m,0,0,s,s);
+      pendingImg=cv.toDataURL("image/jpeg",0.8);
+      $("preview").innerHTML=`<img src="${pendingImg}" alt="">`;
+    };
+    im.src=fr.result;
+  };
+  fr.readAsDataURL(f);
+});
+$("addCard").onclick=async()=>{
+  const label=$("nm").value.trim();
+  if(!label){ $("addMsg").textContent="Escreve o nome do cartão."; $("nm").focus(); return; }
+  cards.push({id:"u"+Date.now(),cat:$("cat").value,label,say:$("say").value.trim()||label,emoji:"⬜",img:pendingImg});
+  await save();
+  $("nm").value=""; $("say").value=""; pendingImg=null; $("preview").textContent="📷"; $("photo").value="";
+  $("addMsg").textContent=`Guardado em ${CATS.find(c=>c.id===$("cat").value).name}.`;
+  $("manageCat").value=$("cat").value; renderManage();
+};
+$("manageCat").onchange=renderManage;
+function renderManage(){
+  const cat=$("manageCat").value, el=$("manageList"); el.innerHTML="";
+  const list=cards.filter(c=>c.cat===cat);
+  if(!list.length){el.innerHTML='<p>Ainda não há cartões nesta categoria.</p>';return}
+  list.forEach(c=>{
+    const row=document.createElement("div"); row.className="item";
+    row.innerHTML=`<div class="thumb" style="--c:var(${catColor(c.cat)})">${picHTML(c,"")}</div><div class="nm">${esc(c.label)}<small>Diz “${esc(c.say||c.label)}”</small></div>`;
+    const up=document.createElement("button"); up.className="btn"; up.textContent="↑"; up.setAttribute("aria-label","Subir");
+    up.onclick=async()=>{const i=cards.indexOf(c); const prev=cards.slice(0,i).reverse().find(x=>x.cat===c.cat); if(prev){const j=cards.indexOf(prev);[cards[i],cards[j]]=[cards[j],cards[i]];await save();renderManage()}};
+    const del=document.createElement("button"); del.className="btn"; del.textContent="Apagar";
+    del.onclick=async()=>{ if(del.dataset.sure){cards=cards.filter(x=>x!==c);await save();renderManage()} else {del.dataset.sure=1;del.textContent="Confirmar";del.classList.add("danger");setTimeout(()=>{if(del.isConnected){delete del.dataset.sure;del.textContent="Apagar";del.classList.remove("danger")}},3000)} };
+    row.append(up,del); el.appendChild(row);
+  });
+}
+$("resetAll").onclick=async function(){
+  if(this.dataset.sure){ cards=DEFAULTS.slice(); await save(); renderManage(); this.textContent="Repor cartões de origem"; delete this.dataset.sure; toast("Cartões repostos"); }
+  else { this.dataset.sure=1; this.textContent="Tens a certeza? Apaga as tuas fotos"; this.classList.add("danger"); }
+};
+
+$("voiceSel").onchange=e=>{settings.voice=e.target.value;saveSettings();voice=pickVoice()};
+$("rate").oninput=e=>{settings.rate=+e.target.value;saveSettings()};
+$("tapSpeak").onchange=e=>{settings.tapSpeak=e.target.checked;saveSettings()};
+$("testVoice").onclick=()=>speak("Olá Xavier! Eu quero tosta mista.");
+
+let tt=null; function toast(m){const t=$("toast");t.textContent=m;t.hidden=false;clearTimeout(tt);tt=setTimeout(()=>t.hidden=true,2200)}
+
+/* ---------- voz nativa (app Android) ---------- */
+function nativeVoice(){
+  const lab=$("voiceSel").closest("label");
+  const b=document.createElement("button"); b.className="btn"; b.id="ttsSettings"; b.textContent="Abrir definições de voz do tablet";
+  b.onclick=()=>{try{AndroidTTS.openSettings()}catch(e){}};
+  lab.replaceWith(b);
+  let tries=0;
+  (function poll(){
+    let s="sem voz"; try{s=AndroidTTS.status()}catch(e){}
+    const msg={"pt-PT":"Voz: português de Portugal","sem voz de Portugal":"Falta instalar a voz de Portugal (modo pais)","sem voz":"O tablet não tem motor de voz","a preparar":"A preparar a voz…"};
+    $("voiceInfo").textContent=msg[s]||s;
+    if(s==="a preparar"&&tries++<20) setTimeout(poll,500);
+  })();
+}
+window.fxBack=()=>{ if(!$("panel").hidden){ $("panel").hidden=true; renderGrid(); } };
+
+/* ---------- arranque ---------- */
+(async function(){
+  loadSettings();
+  $("rate").value=settings.rate; $("tapSpeak").checked=settings.tapSpeak;
+  fillCatSelects(); renderCore(); renderTabs(); renderGrid(); renderStrip();
+  if(window.AndroidTTS){ nativeVoice(); }
+  else if("speechSynthesis" in window){ voice=pickVoice(); speechSynthesis.onvoiceschanged=()=>{voice=pickVoice()}; }
+  else $("voiceInfo").textContent="Este navegador não tem voz";
+  try{ if(navigator.wakeLock) navigator.wakeLock.request("screen").catch(()=>{}) }catch(e){}
+  await openDB();
+  const saved=await idbGet("cards");
+  if(Array.isArray(saved)&&saved.length){cards=saved;renderGrid()}
+})();
+</script>
