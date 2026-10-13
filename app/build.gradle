@@ -10,8 +10,18 @@ android {
         applicationId "pt.ricardo.falaxavier"
         minSdk 24
         targetSdk 34
-        versionCode 1
-        versionName "1.0"
+        versionCode 2
+        versionName "1.1"
+    }
+
+    // Chave fixa: assim cada nova versão instala por cima da anterior sem perder cartões nem fotos.
+    signingConfigs {
+        debug {
+            storeFile file('debug.keystore')
+            storePassword 'android'
+            keyAlias 'androiddebugkey'
+            keyPassword 'android'
+        }
     }
 
     compileOptions {
@@ -20,6 +30,7 @@ android {
     }
 
     buildTypes {
+        debug { signingConfig signingConfigs.debug }
         release { minifyEnabled false }
     }
 
