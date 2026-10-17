@@ -22,7 +22,7 @@ import java.io.InputStream;
 import java.util.Locale;
 
 /**
- * Fala Xavier. Mostra o quadro de comunicação (assets/index.html) num WebView,
+ * Pictovoz. Mostra o quadro de comunicação (assets/index.html) num WebView,
  * dá-lhe a voz do Android (TextToSpeech) e deixa tirar fotos com a câmara.
  */
 public class MainActivity extends Activity {
