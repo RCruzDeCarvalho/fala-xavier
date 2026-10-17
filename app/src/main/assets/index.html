@@ -1,20 +1,20 @@
-<title>Fala, Xavier</title>
+<title>Pictovoz</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&family=Baloo+2:wght@600;800&display=swap">
 <style>
 /* Layout: ecrã único de tablet. Tira de frase fixa em cima, palavras essenciais, separadores por categoria, grelha de cartões grandes. Cores das categorias inspiradas na chave de Fitzgerald usada em CAA. */
 :root{
   --bg:#E9EEF2; --surface:#FFFFFF; --ink:#18222D; --muted:#5B6B7A; --line:#C9D3DC; --accent:#1F6FB2;
-  --people:#FFE79A; --action:#BFE8B5; --thing:#FFD2A6; --feel:#BFD9F5; --social:#F6C6DA; --no:#F4B3AE; --play:#DCCBF7;
+  --people:#FFE79A; --action:#BFE8B5; --thing:#FFD2A6; --feel:#BFD9F5; --social:#F6C6DA; --no:#F4B3AE; --play:#DCCBF7; --routine:#B5E3E0;
   --display:"Baloo 2","Atkinson Hyperlegible",system-ui,sans-serif;
   --body:"Atkinson Hyperlegible",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
   --r:18px;
 }
 @media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
   --bg:#10161C; --surface:#1A232C; --ink:#EAF0F5; --muted:#9AAAB8; --line:#2F3C48; --accent:#6DB3EE;
-  --people:#5E5020; --action:#2E5428; --thing:#61401F; --feel:#26445F; --social:#5C2E42; --no:#622A27; --play:#46335F; color-scheme:dark}}
+  --people:#5E5020; --action:#2E5428; --thing:#61401F; --feel:#26445F; --social:#5C2E42; --no:#622A27; --play:#46335F; --routine:#1F4E4B; color-scheme:dark}}
 :root[data-theme="dark"]{
   --bg:#10161C; --surface:#1A232C; --ink:#EAF0F5; --muted:#9AAAB8; --line:#2F3C48; --accent:#6DB3EE;
-  --people:#5E5020; --action:#2E5428; --thing:#61401F; --feel:#26445F; --social:#5C2E42; --no:#622A27; --play:#46335F; color-scheme:dark}
+  --people:#5E5020; --action:#2E5428; --thing:#61401F; --feel:#26445F; --social:#5C2E42; --no:#622A27; --play:#46335F; --routine:#1F4E4B; color-scheme:dark}
 html,body{height:100%}
 body{background:var(--bg);color:var(--ink);font-family:var(--body);font-size:16px;-webkit-tap-highlight-color:transparent;user-select:none;-webkit-user-select:none}
 .app{height:100%;display:flex;flex-direction:column;gap:12px;padding-inline:16px;padding-block:12px;box-sizing:border-box;max-width:1200px;margin:0 auto}
@@ -157,6 +157,7 @@ input[type=text],select{font:inherit;padding:12px;border-radius:10px;border:2px 
 const CATS = [
   {id:"comer", name:"Comer e beber", c:"--thing"},
   {id:"fazer", name:"Fazer", c:"--action"},
+  {id:"rotinas", name:"Rotinas", c:"--routine"},
   {id:"pessoas", name:"Pessoas", c:"--people"},
   {id:"sentir", name:"Sentir", c:"--feel"},
   {id:"cores", name:"Cores e jogo", c:"--play"}
@@ -173,7 +174,7 @@ const DEFAULTS = [
   ["comer","Tosta mista","🥪"],["comer","Torrada","🍞"],["comer","Nuggets","🍗"],["comer","Panado","🐟"],
   ["comer","Batatas fritas","🍟"],["comer","Água","💧"],["comer","Ice tea","🧃"],["comer","Coca-Cola","🥤"],
   ["fazer","Ver televisão","📺"],["fazer","Brincar","🧸"],["fazer","Ir à rua","🌳"],["fazer","Andar de carro","🚗"],
-  ["fazer","Colo","🤗"],["fazer","Banho","🛁"],["fazer","Mudar a fralda","🚼"],["fazer","Dormir","🛏️"],["fazer","Música","🎵"],
+  ["fazer","Colo","🤗"],["rotinas","Banho","🛁"],["rotinas","Mudar a fralda","🚼"],["rotinas","Dormir","🛏️"],["fazer","Música","🎵"],
   ["pessoas","Mãe","👩"],["pessoas","Pai","👨"],["pessoas","Manos","🧒"],["pessoas","Avó","👵"],["pessoas","Professora","🧑‍🏫"],
   ["sentir","Dói","🤕"],["sentir","Contente","😀"],["sentir","Zangado","😠"],["sentir","Cansado","😴"],["sentir","Frio","🥶"],["sentir","Calor","🥵"]
 ].map(([cat,label,emoji],i)=>({id:"d"+i,cat,label,say:label,emoji,v:1}));
@@ -183,7 +184,18 @@ const COLORS = [["Azul","#1E6FD9"],["Vermelho","#D93025"],["Amarelo","#F5C518"],
 COLORS.forEach(([label,swatch],i)=>DEFAULTS.push({id:"c"+i,cat:"cores",label,say:label,swatch,v:2}));
 [["A minha vez","👆"],["A tua vez","👉"],["Mais uma","☝️"],["Outra vez","🔁"],["Igual","🟰"]]
   .forEach(([label,emoji],i)=>DEFAULTS.push({id:"j"+i,cat:"cores",label,say:label,emoji,v:2}));
-const DEFAULTS_VERSION = 2;
+// Versão 3: mais acções e a categoria Rotinas
+[["comer","Comer","🍽️"],["comer","Beber","🥛"],
+ ["fazer","Abrir","🔓"],["fazer","Fechar","🔒"],["fazer","Parar","🛑"],["fazer","Esperar","⏳"],
+ ["fazer","Tablet","📱"],["fazer","Ler uma história","📖"],["fazer","Pintar","🖍️"],["fazer","Bolinhas de sabão","🧼"],
+ ["fazer","Saltar","🤸"],["fazer","Correr","🏃"],["fazer","Dançar","💃"],["fazer","Cantar","🎤"],
+ ["fazer","Cócegas","😆"],["fazer","Abraço","💕"],["fazer","Baloiço","🎠"],["fazer","Ir ao parque","🏞️"],
+ ["fazer","Ir à praia","🏖️"],["fazer","Ir às compras","🛒"],["fazer","Ir para casa","🏠"],["fazer","Ir à escola","🏫"],
+ ["rotinas","Casa de banho","🚽"],["rotinas","Lavar as mãos","👐"],["rotinas","Lavar os dentes","🦷"],
+ ["rotinas","Vestir","👕"],["rotinas","Calçar","👟"],["rotinas","Pentear","💇"]]
+  .forEach(([cat,label,emoji],i)=>DEFAULTS.push({id:"a"+i,cat,label,say:label,emoji,v:3}));
+const MOVED_TO_ROUTINES = ["d13","d14","d15"];
+const DEFAULTS_VERSION = 3;
 
 let cards = DEFAULTS.slice();
 let strip = [];
@@ -388,6 +400,7 @@ window.fxBack=()=>{ if(!$("panel").hidden){ $("panel").hidden=true; renderGrid()
     if(dv<DEFAULTS_VERSION){
       const have=new Set(cards.map(c=>c.id));
       DEFAULTS.filter(d=>d.v>dv && !have.has(d.id)).forEach(d=>cards.push(d));
+      if(dv<3) cards.forEach(c=>{ if(MOVED_TO_ROUTINES.includes(c.id) && c.cat==="fazer") c.cat="rotinas"; });
       await save();
     }
     renderGrid();
