@@ -22,6 +22,7 @@
   --font:"Atkinson",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
   --r:16px;
 }
+[hidden]{display:none!important}
 html,body{height:100%}
 body{background:var(--board);color:var(--ink);font-family:var(--font);font-size:16px;
   background-image:radial-gradient(var(--board-hi) 1px,transparent 1.4px);background-size:7px 7px;
@@ -89,6 +90,16 @@ svg{display:block}
 .lock svg{width:14px;height:14px;position:relative}
 .lock b{position:absolute;inset:0;background:var(--speak);transform:scaleX(0);transform-origin:left;opacity:.35}
 .lock span{position:relative}
+.footBtns{display:flex;gap:8px;align-items:center}
+.fbtn{border:1px solid #3B5468;background:transparent;border-radius:999px;padding:6px 12px;color:var(--board-muted);display:flex;align-items:center;gap:6px;font-size:.8rem;text-decoration:none}
+.fbtn svg{width:14px;height:14px}
+/* Confirmação antes de sair da app */
+.sheetWrap{position:fixed;inset:0;background:rgba(10,18,26,.6);display:grid;place-items:center;padding-inline:16px;z-index:5}
+.sheet{background:var(--card);color:var(--ink);border-radius:20px;padding:22px;max-width:420px;width:100%;box-sizing:border-box;display:flex;flex-direction:column;gap:12px;box-shadow:0 10px 30px rgba(0,0,0,.35)}
+.sheet h2{margin:0;font-size:1.3rem}
+.sheet p{margin:0;color:var(--muted);line-height:1.5}
+.sheet .addr{font-weight:700;color:var(--ink);user-select:text;-webkit-user-select:text;word-break:break-all}
+.sheet .row{justify-content:flex-end}
 
 /* ---------- Modo pais (claro, para leitura) ---------- */
 .panel{position:fixed;inset:0;background:var(--page);color:var(--ink);overflow-y:auto;padding-inline:16px;
@@ -154,9 +165,17 @@ input[type=range]{accent-color:var(--board)}
   </div>
   <div class="foot">
     <div class="brand"><b>PICTOVOZ</b><span id="voiceInfo">A preparar a voz…</span></div>
+    <div class="footBtns">
+    <button class="fbtn" id="kofiBtn" aria-label="Apoiar o Sem Legendas no Ko-fi">
+      <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"><path d="M8 13.5S2 10 2 6a3 3 0 0 1 6-1 3 3 0 0 1 6 1c0 4-6 7.5-6 7.5z"/></svg>
+      <span>Apoiar</span></button>
+    <button class="fbtn" id="ideaBtn" aria-label="Enviar uma sugestão para melhorar a app">
+      <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="M5.5 10.5a4.5 4.5 0 1 1 5 0V12h-5z"/><path d="M6.5 14.5h3"/></svg>
+      <span>Sugestões</span></button>
     <button class="lock" id="lock" aria-label="Manter premido para abrir o modo pais"><b id="lockFill"></b>
       <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="3" y="7" width="10" height="7" rx="1.5"/><path d="M5.5 7V5a2.5 2.5 0 0 1 5 0v2"/></svg>
       <span>Pais</span></button>
+    </div>
   </div>
 </div>
 
@@ -198,6 +217,17 @@ input[type=range]{accent-color:var(--board)}
       <label for="manageCat">Categoria<select id="manageCat"></select></label>
       <div class="list" id="manageList"></div>
       <div class="row"><button class="btn" id="resetAll">Repor cartões de origem</button></div>
+    </div>
+  </div>
+</div>
+<div class="sheetWrap" id="sheetWrap" hidden>
+  <div class="sheet" role="dialog" aria-modal="true" aria-labelledby="sheetTitle">
+    <h2 id="sheetTitle"></h2>
+    <p id="sheetText"></p>
+    <p class="addr" id="sheetAddr" hidden></p>
+    <div class="row">
+      <button class="btn" id="sheetCancel">Cancelar</button>
+      <a class="btn primary" id="sheetGo" href="#" target="_blank" rel="noopener" style="text-decoration:none">Abrir</a>
     </div>
   </div>
 </div>
@@ -436,6 +466,40 @@ function nativeVoice(){
   })();
 }
 window.fxBack=()=>{ if(!$("panel").hidden){ $("panel").hidden=true; renderGrid(); } };
+
+/* ---------- Apoiar e sugestões (pedem confirmação, porque saem da app) ---------- */
+const KOFI_URL = "https://ko-fi.com/semlegendas";
+const IDEAS_EMAIL = "ricardoduartecruz@gmail.com";
+function appVersion(){ try{ return window.AndroidTTS && AndroidTTS.appVersion ? AndroidTTS.appVersion() : "web"; }catch(e){ return "web"; } }
+function openOutside(url){
+  if(window.AndroidTTS && AndroidTTS.openUrl){ try{ AndroidTTS.openUrl(url); return true; }catch(e){} }
+  return false;
+}
+function showSheet({title,text,url,addr,go}){
+  $("sheetTitle").textContent=title; $("sheetText").textContent=text;
+  $("sheetAddr").hidden=!addr; $("sheetAddr").textContent=addr||"";
+  const g=$("sheetGo"); g.textContent=go; g.href=url;
+  $("sheetWrap").hidden=false;
+}
+function hideSheet(){ $("sheetWrap").hidden=true; }
+$("sheetCancel").onclick=hideSheet;
+$("sheetWrap").addEventListener("click",e=>{ if(e.target.id==="sheetWrap") hideSheet(); });
+$("sheetGo").addEventListener("click",e=>{
+  if(openOutside($("sheetGo").href)){ e.preventDefault(); }
+  hideSheet();
+});
+$("kofiBtn").onclick=()=>showSheet({title:"Apoiar o Sem Legendas",
+  text:"A Pictovoz é gratuita. Se te for útil, podes apoiar o projecto no Ko-fi. Vai abrir o browser.",url:KOFI_URL,go:"Abrir o Ko-fi"});
+$("ideaBtn").onclick=()=>{
+  const subject="Sugestão para a Pictovoz";
+  const body="Olá! Tenho uma sugestão para a Pictovoz:\n\n\n\n---\nVersão da app: "+appVersion();
+  const url="mailto:"+IDEAS_EMAIL+"?subject="+encodeURIComponent(subject)+"&body="+encodeURIComponent(body);
+  showSheet({title:"Sugerir uma melhoria",text: window.AndroidTTS
+      ? "Vai abrir o email com uma mensagem já começada. É só escrever a ideia e enviar."
+      : "Escreve a tua ideia para este endereço.",
+    url,addr: window.AndroidTTS ? "" : IDEAS_EMAIL,go: window.AndroidTTS ? "Escrever email" : "Abrir email"});
+};
+window.fxBack=(function(prev){ return ()=>{ if(!$("sheetWrap").hidden){ hideSheet(); return; } prev(); }; })(window.fxBack);
 
 /* ---------- arranque ---------- */
 (async function(){

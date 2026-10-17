@@ -98,6 +98,31 @@ public class MainActivity extends Activity {
         }
 
         @JavascriptInterface
+        public void openUrl(String url) {
+            if (url == null) return;
+            final String u = url;
+            if (!(u.startsWith("https://") || u.startsWith("mailto:"))) return;
+            runOnUiThread(() -> {
+                try {
+                    Intent i = u.startsWith("mailto:")
+                            ? new Intent(Intent.ACTION_SENDTO, Uri.parse(u))
+                            : new Intent(Intent.ACTION_VIEW, Uri.parse(u));
+                    i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                    startActivity(i);
+                } catch (Exception ignored) { }
+            });
+        }
+
+        @JavascriptInterface
+        public String appVersion() {
+            try {
+                return getPackageManager().getPackageInfo(getPackageName(), 0).versionName;
+            } catch (Exception e) {
+                return "?";
+            }
+        }
+
+        @JavascriptInterface
         public void openSettings() {
             runOnUiThread(() -> {
                 try {
