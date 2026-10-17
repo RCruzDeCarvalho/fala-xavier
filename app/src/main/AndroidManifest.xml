@@ -13,7 +13,7 @@
     </queries>
 
     <application
-        android:label="Fala Xavier"
+        android:label="Pictovoz"
         android:icon="@mipmap/ic_launcher"
         android:allowBackup="true"
         android:theme="@android:style/Theme.Material.Light.NoActionBar.Fullscreen">
