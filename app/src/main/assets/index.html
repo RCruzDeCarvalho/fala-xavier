@@ -83,14 +83,16 @@ svg{display:block}
 /* ---------- Rodapé ---------- */
 .foot{display:flex;justify-content:space-between;align-items:center;gap:12px;color:var(--board-muted);font-size:.85rem;padding-inline:4px}
 .brand{display:flex;align-items:center;gap:8px;min-width:0}
-.brand b{color:var(--board-ink);letter-spacing:.04em;font-size:.95rem}
+.brand b{color:var(--board-ink);letter-spacing:.04em;font-size:.95rem;flex:none}
 .brand span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .lock{border:1px solid #3B5468;background:transparent;border-radius:999px;padding:6px 12px;color:var(--board-muted);position:relative;overflow:hidden;
   touch-action:none;display:flex;align-items:center;gap:6px;font-size:.8rem}
 .lock svg{width:14px;height:14px;position:relative}
 .lock b{position:absolute;inset:0;background:var(--speak);transform:scaleX(0);transform-origin:left;opacity:.35}
 .lock span{position:relative}
-.footBtns{display:flex;gap:8px;align-items:center}
+.footBtns{display:flex;gap:8px;align-items:center;flex:none}
+@media (max-width:760px){.brand span{display:none}}
+@media (max-width:440px){.fbtn span{display:none}.fbtn{padding:6px 10px}.footBtns{gap:6px}}
 .fbtn{border:1px solid #3B5468;background:transparent;border-radius:999px;padding:6px 12px;color:var(--board-muted);display:flex;align-items:center;gap:6px;font-size:.8rem;text-decoration:none}
 .fbtn svg{width:14px;height:14px}
 /* Confirmação antes de sair da app */
