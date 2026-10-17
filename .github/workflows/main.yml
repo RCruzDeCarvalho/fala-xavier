@@ -25,16 +25,16 @@ jobs:
         run: |
           VERSAO=$(grep -oP 'versionName "\K[^"]+' app/build.gradle)
           echo "versao=$VERSAO" >> "$GITHUB_OUTPUT"
-          cp app/build/outputs/apk/debug/app-debug.apk "pictovoz-$VERSAO.apk"
+          cp app/build/outputs/apk/debug/app-debug.apk pictovoz.apk
       - uses: actions/upload-artifact@v5
         with:
           name: pictovoz-apk
-          path: pictovoz-*.apk
+          path: pictovoz.apk
       - name: Publicar em Versões
         if: github.ref == 'refs/heads/main'
         uses: softprops/action-gh-release@v2
         with:
           tag_name: v${{ steps.apk.outputs.versao }}-${{ github.run_number }}
           name: Pictovoz ${{ steps.apk.outputs.versao }} (compilação ${{ github.run_number }})
-          files: pictovoz-*.apk
+          files: pictovoz.apk
           make_latest: true
